@@ -1,0 +1,46 @@
+# source: http://localhost:4000/graphql
+# timestamp: Tue Dec 18 2018 22:31:14 GMT+0100 (GMT+01:00)
+
+schema {
+  query: RootQueryType
+  mutation: RootMutationType
+}
+
+type RootMutationType {
+  signin(email: String!, password: String!): SignInResponse!
+  signup(email: String!, name: String!, password: String!): SignUpResponse!
+}
+
+type RootQueryType {
+  users: [User!]
+}
+
+enum SignInError {
+  PASSWORD_INVALID
+  USER_DOES_NOT_EXIST
+}
+
+type SignInResponse {
+  errors: [SignInError!]!
+  result: SignUpResult
+}
+
+enum SignUpError {
+  EMAIL_ALREADY_USED
+}
+
+type SignUpResponse {
+  errors: [SignUpError!]!
+  result: SignUpResult
+}
+
+type SignUpResult {
+  token: String!
+}
+
+type User {
+  email: String!
+  id: ID!
+  name: String!
+  passwordHash: String!
+}

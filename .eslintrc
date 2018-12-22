@@ -1,0 +1,8 @@
+{
+  "parser": "babel-eslint",
+  "plugins": ["flowtype"],
+  "extends": ["react-app", "plugin:flowtype/recommended"],
+  "rules": {
+    "flowtype/require-valid-file-annotation": [2, "always"]
+  }
+}

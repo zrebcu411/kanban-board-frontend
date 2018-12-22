@@ -1,0 +1,15 @@
+[ignore]
+
+[include]
+
+[libs]
+flow-typed
+
+[lints]
+
+[options]
+emoji=true
+experimental.const_params=true
+
+[version]
+0.89.0
