@@ -1,17 +1,12 @@
 # source: http://localhost:4000/graphql
-# timestamp: Tue Dec 18 2018 22:31:14 GMT+0100 (GMT+01:00)
+# timestamp: Sat Dec 22 2018 16:08:05 GMT+0100 (GMT+01:00)
 
-schema {
-  query: RootQueryType
-  mutation: RootMutationType
-}
-
-type RootMutationType {
+type Mutation {
   signin(email: String!, password: String!): SignInResponse!
   signup(email: String!, name: String!, password: String!): SignUpResponse!
 }
 
-type RootQueryType {
+type Query {
   users: [User!]
 }
 

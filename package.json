@@ -7,23 +7,31 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "get-schema": "graphql get-schema"
+    "generate-graphql": "graphql get-schema && npx apollo-codegen generate 'src/**/*.js' --target flow --output 'src/types/graphql.js' --project-name kanban-board-frontend"
   },
   "dependencies": {
+    "antd": "^3.11.3",
     "apollo-boost": "^0.1.22",
     "apollo-cache-inmemory": "^1.3.11",
     "apollo-link-context": "^1.0.12",
     "apollo-link-error": "^1.1.5",
+    "classnames": "^2.2.6",
     "flow-typed": "^2.5.1",
+    "formik": "^1.4.1",
     "graphql": "^14.0.2",
+    "jwt-decode": "^2.2.0",
+    "ramda": "^0.26.1",
     "react": "^16.6.3",
     "react-apollo": "^2.3.3",
     "react-dom": "^16.6.3",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "2.1.1"
+    "react-scripts": "2.1.1",
+    "styled-components": "^4.1.3",
+    "yup": "^0.26.6"
   },
   "devDependencies": {
+    "eslint-plugin-flowtype": "^3.2.0",
     "flow-bin": "^0.89.0"
   },
   "eslintConfig": {

@@ -1,39 +1,32 @@
 // @flow
 
 import React, { Component, type ComponentType } from 'react';
-import _ from 'lodash/fp';
+import decodeJwt from 'jwt-decode';
+import * as R from 'ramda';
 
-import { LS_AUTH_KEY } from 'core/config';
-import type { AuthState, Credentials } from './types';
-import * as ApiAuth from './api';
+import type { Auth } from './types';
+
+const LS_AUTH_KEY = 'kanban-board-frontend-ls-auth-key';
 
 type State = {
-  auth: null | AuthState,
-  signIn: (credentials: Credentials) => Promise<*>,
-  setToken: (auth: AuthState) => void,
+  auth: null | Auth,
+  setAuth: (token: string) => void,
   signOut: () => void,
   isLoggedIn: () => boolean
 };
 
-function getInitialState(methods) {
-  return {
-    auth: null,
-    ...methods
-  };
+function noop() {
+  return R.always(undefined);
 }
 
-function stubReject(c: Credentials) {
-  return Promise.reject();
-}
+const initialState = {
+  auth: null,
+  signOut: noop(),
+  setAuth: noop(),
+  isLoggedIn: R.always(false)
+};
 
-const { Provider, Consumer } = React.createContext(
-  getInitialState({
-    signIn: stubReject,
-    signOut: _.noop,
-    setToken: _.noop,
-    isLoggedIn: _.stubFalse
-  })
-);
+const { Provider, Consumer } = React.createContext<State>(initialState);
 
 export const AuthContextConsumer = Consumer;
 
@@ -46,65 +39,31 @@ export class AuthContextProvider extends Component<
   constructor() {
     super();
 
-    const auth: null | AuthState = getAuthFromLocalStorage();
-    if (isLoggedIn(auth)) {
-      this.intervalID = this.startInterval();
-    }
+    const auth: null | Auth = getAuthFromLocalStorage();
 
     this.state = {
       auth,
-      signIn: this.signIn,
       signOut: this.signOut,
-      setToken: this.setToken,
+      setAuth: this.setAuth,
       isLoggedIn: this.isLoggedIn
     };
   }
 
-  intervalID: IntervalID;
-
-  setToken = (auth: AuthState) => {
+  setAuth = (token: string) => {
+    const auth = decodeToken(token);
     const item = JSON.stringify(auth);
     window.localStorage.setItem(LS_AUTH_KEY, item);
-    this.setState({ auth }, () => {
-      this.intervalID = this.startInterval();
-    });
-  };
-
-  signIn = (credentials: Credentials) => {
-    return ApiAuth.signIn(credentials).then(auth => {
-      this.setToken(auth);
-    });
+    this.setState({ auth });
   };
 
   signOut = () => {
     removeAuthFromLocalStorage();
     this.setState({ auth: null });
-    window.clearInterval(this.intervalID);
   };
 
   isLoggedIn = () => {
     return isLoggedIn(this.state.auth);
   };
-
-  startInterval(): IntervalID {
-    return setInterval(() => {
-      const auth: null | AuthState = getAuthFromLocalStorage();
-      this.setState(
-        state => {
-          if (!_.isEqual(state.auth, auth)) {
-            return { auth };
-          } else {
-            return null;
-          }
-        },
-        () => {
-          if (!this.isLoggedIn()) {
-            this.signOut();
-          }
-        }
-      );
-    }, 1000);
-  }
 
   render() {
     return <Provider value={this.state}>{this.props.children}</Provider>;
@@ -113,7 +72,7 @@ export class AuthContextProvider extends Component<
 
 function isLoggedIn(auth) {
   if (!auth) return false;
-  return !!auth.accessToken && Date.now() / 1000 <= auth.tokenExpiration;
+  return !!auth.token && Date.now() / 1000 <= auth.tokenExpiration;
 }
 
 export function withAuthContext<Props: Object>(
@@ -128,23 +87,21 @@ export function withAuthContext<Props: Object>(
   };
 }
 
-export function removeAuthFromLocalStorage() {
+function removeAuthFromLocalStorage() {
   window.localStorage.removeItem(LS_AUTH_KEY);
 }
 
-export function getAccessToken() {
-  const auth = getAuthFromLocalStorage();
-  if (auth) {
-    return auth.accessToken;
-  }
-  return undefined;
-}
-
-export function getAuthFromLocalStorage(): null | AuthState {
+function getAuthFromLocalStorage(): null | Auth {
   try {
     const item = window.localStorage.getItem(LS_AUTH_KEY);
     return JSON.parse(item);
   } catch (e) {
     return null;
   }
+}
+
+function decodeToken(token: string): Auth {
+  const decoded = decodeJwt(token);
+  const { exp, sub } = decoded;
+  return { token, tokenExpiration: exp, clientId: sub };
 }
