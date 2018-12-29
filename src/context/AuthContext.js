@@ -91,6 +91,14 @@ function removeAuthFromLocalStorage() {
   window.localStorage.removeItem(LS_AUTH_KEY);
 }
 
+export function getAccessToken() {
+  const auth = getAuthFromLocalStorage();
+  if (auth) {
+    return auth.token;
+  }
+  return undefined;
+}
+
 function getAuthFromLocalStorage(): null | Auth {
   try {
     const item = window.localStorage.getItem(LS_AUTH_KEY);
