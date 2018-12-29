@@ -7,25 +7,37 @@ import { Redirect, Switch, Router, Route } from 'react-router-dom';
 import { history } from './history';
 import { client } from './apollo-client.js';
 
+import { AuthContextProvider } from '../context/AuthContext';
+import { PrivateRoute } from './PrivateRoute';
+
+import { Layout } from '../layout';
+
 import { SignUp } from '../views/signup';
+import { SignIn } from '../views/signin';
+import { Board } from '../views/board';
 
 import 'antd/dist/antd.css';
 
 export const Application = () => (
   <Router history={history}>
-    <ApolloProvider client={client}>
-      <Switch>
-        <Route path="/signup" component={SignUp} />
-        {/* TODO: change to private route */}
-        <Route
-          render={() => (
-            <Switch>
-              <Route path="/" component={() => <div>/</div>} />
-              <Redirect to="/" />
-            </Switch>
-          )}
-        />
-      </Switch>
-    </ApolloProvider>
+    <AuthContextProvider>
+      <ApolloProvider client={client}>
+        <Switch>
+          <Route path="/signup" component={SignUp} />
+          <Route path="/signin" component={SignIn} />
+
+          <PrivateRoute
+            render={() => (
+              <Layout>
+                <Switch>
+                  <Route path="/board" component={Board} />
+                  <Redirect to="/" />
+                </Switch>
+              </Layout>
+            )}
+          />
+        </Switch>
+      </ApolloProvider>
+    </AuthContextProvider>
   </Router>
 );

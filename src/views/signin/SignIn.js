@@ -17,7 +17,7 @@ import * as Notifications from '../../domain/notifications.js';
 import * as Form from '../../modules/form';
 
 import { AuthContextConsumer } from '../../context/AuthContext';
-import { SignUpMutation } from './SignUpMutation';
+import { SignInMutation } from './SignInMutation';
 
 import type { Values } from './types';
 
@@ -25,16 +25,16 @@ type Props = {|
   history: RouterHistory
 |};
 
-export const SignUp = (props: Props) => (
+export const SignIn = (props: Props) => (
   <AuthContextConsumer>
     {context => (
-      <SignUpMutation>
-        {(signup, { loading, data }) => (
+      <SignInMutation>
+        {(signin, { loading, data }) => (
           <Formik
             initialValues={INITIAL_VALUES}
             validationSchema={VALIDATION_SCHEMA}
             onSubmit={(values: Values, actions: FormikActions<Values>) => {
-              signup(values)
+              signin(values)
                 .then(({ errors, result }) => {
                   if (result) {
                     context.setAuth(result.token);
@@ -50,13 +50,8 @@ export const SignUp = (props: Props) => (
             render={(formik: FormikProps<Values>) => (
               <Wrapper>
                 <FormWrapper>
-                  <Title>Create an account</Title>
+                  <Title>Sign in to Kanban Board</Title>
                   <FormikForm noValidate autoComplete="off">
-                    <Form.Input
-                      field="name"
-                      placeholder="Imię i nazwisko"
-                      prefix={<Icon type="user" style={styles.inputIcon} />}
-                    />
                     <Form.Input
                       field="email"
                       type="email"
@@ -77,11 +72,11 @@ export const SignUp = (props: Props) => (
                         loading={loading}
                         block
                       >
-                        Sign up
+                        Sign in
                       </Button>
                     </ButtonRow>
                     <div>
-                      Do you have an account? <Link to="/signin">Sign in.</Link>
+                      Don't have an account? <Link to="/signup">Sign up.</Link>
                     </div>
                   </FormikForm>
                 </FormWrapper>
@@ -89,19 +84,17 @@ export const SignUp = (props: Props) => (
             )}
           />
         )}
-      </SignUpMutation>
+      </SignInMutation>
     )}
   </AuthContextConsumer>
 );
 
 const INITIAL_VALUES = {
-  name: '',
   email: '',
   password: ''
 };
 
 const VALIDATION_SCHEMA = yup.object().shape({
-  name: yup.string().required('Imię i nazwisko jest wymagane'),
   email: yup
     .string()
     .email('E-mail jest niepoprawny')
@@ -112,7 +105,8 @@ const VALIDATION_SCHEMA = yup.object().shape({
 type Keys = $Keys<Values>;
 
 const ERROR_MAPPING: { [string]: [Keys, string] } = {
-  email_already_used: ['email', 'Podany adres e-mail jest już zajęty']
+  password_invalid: ['password', 'Podane hasło jest niepoprawne'],
+  user_does_not_exist: ['email', 'Podane konto nie istnieje']
 };
 
 const decodeErrorMessage = Errors.createErrorDecoder(ERROR_MAPPING, 'password');

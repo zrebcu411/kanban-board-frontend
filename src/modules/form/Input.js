@@ -11,7 +11,8 @@ type Props<V: Object> = {|
   field: $Keys<V>,
   label?: React$Node,
   placeholder?: string,
-  type?: string
+  type?: string,
+  prefix?: React$Node
 |};
 
 export function Input<V: Object>(props: Props<V>) {
@@ -33,6 +34,7 @@ export function Input<V: Object>(props: Props<V>) {
               {...field}
               placeholder={props.placeholder}
               type={props.type}
+              prefix={props.prefix}
               value={value}
             />
           </FormItem>

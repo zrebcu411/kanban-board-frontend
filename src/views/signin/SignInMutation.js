@@ -10,9 +10,9 @@ import gql from 'graphql-tag';
 
 import type { Values, Result } from './types';
 
-export const SIGN_UP_MUTATION = gql`
-  mutation SignUp($name: String!, $email: String!, $password: String!) {
-    signup(name: $name, email: $email, password: $password) {
+export const SIGN_IN_MUTATION = gql`
+  mutation SignIn($email: String!, $password: String!) {
+    signin(email: $email, password: $password) {
       result {
         token
       }
@@ -23,17 +23,17 @@ export const SIGN_UP_MUTATION = gql`
 
 type Props = {|
   children: (
-    (data: Values) => Promise<*>,
+    (credentials: Values) => Promise<*>,
     result: MutationResult<Result>
   ) => React$Node
 |};
 
-export const SignUpMutation = (props: Props) => {
+export const SignInMutation = (props: Props) => {
   return (
-    <Mutation mutation={SIGN_UP_MUTATION}>
-      {(signup: MutationFunction<Result, Values>, result) => {
+    <Mutation mutation={SIGN_IN_MUTATION}>
+      {(signin: MutationFunction<Result, Values>, result) => {
         return props.children(
-          variables => signup({ variables }).then(getData),
+          variables => signin({ variables }).then(getData),
           result
         );
       }}
@@ -43,7 +43,7 @@ export const SignUpMutation = (props: Props) => {
 
 function getData(res) {
   if (res && res.data) {
-    return res.data.signup;
+    return res.data.signin;
   }
   return {
     errors: [],
