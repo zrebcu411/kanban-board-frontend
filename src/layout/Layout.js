@@ -16,7 +16,7 @@ export const Layout = (props: Props) => (
       <Wrapper>
         <Bar>
           <Dropdown
-            trigger="click"
+            trigger={['click']}
             overlay={
               <Menu>
                 <Menu.Item onClick={() => context.signOut()}>
