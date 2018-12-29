@@ -7,43 +7,40 @@ import * as R from 'ramda';
 
 import * as Messages from '../../domain/messages';
 
-import { ADD_CARD_MUTATION } from './mutations';
+import { ADD_LANE_MUTATION } from './mutations';
 
 import type {
-  AddCardResult,
-  Card,
-  AddCardVariables as Variables
+  AddLaneResult,
+  Lane,
+  AddLaneVariables as Variables
 } from './types';
 
 type Props = {|
   boardId: number,
-  laneId: number,
   title: string,
-  description: string,
-  onAdd: (card: Card) => void
+  onAdd: (lane: Lane) => void
 |};
 
-export const AddCardMutation = (props: Props) => (
-  <Mutation mutation={ADD_CARD_MUTATION}>
-    {(addCard: MutationFunction<AddCardResult, Variables>, { loading }) => (
+export const AddLaneMutation = (props: Props) => (
+  <Mutation mutation={ADD_LANE_MUTATION}>
+    {(addLane: MutationFunction<AddLaneResult, Variables>, { loading }) => (
       <Button
         type="primary"
         size="small"
         loading={loading}
-        disabled={R.isEmpty(props.title) || R.isEmpty(props.description)}
+        disabled={R.isEmpty(props.title)}
         onClick={() =>
-          addCard({
+          addLane({
             variables: {
               boardId: props.boardId,
-              laneId: props.laneId,
               title: props.title
             }
           })
             .then(res => {
               if (res && res.data) {
                 props.onAdd({
-                  id: res.data.createCard.id,
-                  title: res.data.createCard.title
+                  id: res.data.createLane.id,
+                  title: res.data.createLane.title
                 });
               }
             })
