@@ -23,18 +23,24 @@ export const View = (props: Props) => {
     <Container>
       <Header>
         <Title>{props.board.title}</Title>
-        <Icon type="star" />
+        <Item>
+          <Icon type="star" />
+        </Item>
         <Divider type="vertical" />
-        <If cond={props.board.private}>
-          <Icon type="lock" />
-          <span>Private</span>
-        </If>
-        <If cond={!props.board.private}>
-          <Icon type="unlock" />
-          <span>Public</span>
-        </If>
+        <Item>
+          <If cond={props.board.private}>
+            <Icon type="lock" />
+            <IconTitle>Private</IconTitle>
+          </If>
+          <If cond={!props.board.private}>
+            <Icon type="unlock" />
+            <IconTitle>Public</IconTitle>
+          </If>
+        </Item>
         <Divider type="vertical" />
-        <Avatar icon="user" size="small" />
+        <Item>
+          <Avatar icon="user" />
+        </Item>
       </Header>
       <BoardComponent
         data={{ lanes: props.board.lanes }}
@@ -54,14 +60,31 @@ const Container = styled.div``;
 
 const Header = styled.div`
   display: flex;
-  padding: 5px 25px;
+  padding: 12px 15px 0 15px;
   align-items: center;
+  background-color: #3179ba;
+  color: #fff;
 `;
 
 const Title = styled.h2`
   margin: 0;
+  color: #fff;
+  font-style: italic;
+  font-weight: 600;
+  padding-right: 15px;
+`;
+
+const Item = styled.div`
+  padding: 0 6px;
+  cursor: pointer;
+`;
+
+const IconTitle = styled.span`
+  margin-left: 5px;
 `;
 
 const Avatar = styled(AntAvatar)`
   cursor: pointer;
+  width: 30px !important;
+  height: 30px !important;
 `;
