@@ -7,6 +7,9 @@ import type {
   AddLane,
   AddLane_createLane,
   AddLaneVariables as AddLaneVariablesT,
+  AddBoard,
+  AddBoard_createBoard,
+  AddBoardVariables as AddBoardVariablesT,
   AddCard,
   AddCard_createCard,
   AddCardVariables as AddCardVariablesT
@@ -17,6 +20,12 @@ export type BoardQuery = Board;
 export type BoardT = Board_board;
 
 export type BoardVariables = BoardVariablesT;
+
+export type AddBoardVariables = AddBoardVariablesT;
+
+export type AddBoardResult = AddBoard;
+
+export type BoardMutationT = AddBoard_createBoard;
 
 export type AddLaneVariables = AddLaneVariablesT;
 
