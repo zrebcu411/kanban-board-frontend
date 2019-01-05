@@ -57,6 +57,7 @@ export const ModalComponent = (props: Props) => {
             addBoard({ title, description, color, private: priv })
               .then(res => {
                 props.onToggle();
+                flush();
                 props.history.push(`/board/${res.id}`);
               })
               .catch(() => Messages.error())
