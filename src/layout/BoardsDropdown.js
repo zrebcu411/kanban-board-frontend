@@ -17,47 +17,48 @@ type Props = {|
 export const BoardsDropdown = (props: Props) => (
   <BoardsProvider>
     {({ boards, loading }) => (
-      <Dropdown
-        trigger={['click']}
-        getPopupContainer={node => node.parentNode}
-        overlay={
-          <Menu>
-            <If cond={loading}>
-              <Menu.Item key="loading">
-                <Spin size="small" />
+      <Container>
+        <Dropdown
+          trigger={['click']}
+          getPopupContainer={node => node.parentNode}
+          overlay={
+            <Menu>
+              <If cond={loading}>
+                <Menu.Item key="loading">
+                  <Spin size="small" />
+                </Menu.Item>
+              </If>
+
+              {boards.map(board => (
+                <Menu.Item key={board.id}>
+                  <Link to={`/board/${board.id}`}>
+                    <Item>
+                      <Color color={board.color}>
+                        {getLetter(board.title)}
+                      </Color>
+                      <Right>
+                        <Title>{board.title}</Title>
+                        <Description>{board.description || 'temp'}</Description>
+                      </Right>
+                    </Item>
+                  </Link>
+                </Menu.Item>
+              ))}
+
+              {!R.isEmpty(boards) && <Menu.Divider />}
+
+              <Menu.Item onClick={() => props.onAddBoardClick()}>
+                Create board...
               </Menu.Item>
-            </If>
-
-            {boards.map(board => (
-              <Menu.Item key={board.id}>
-                <Link to={`/board/${board.id}`}>
-                  <Item>
-                    <Color color={board.color}>{getLetter(board.title)}</Color>
-                    <Right>
-                      <Title>{board.title}</Title>
-                      <Description>
-                        Lorem lorem lorem lorem lorem lorem lorem lorem lorem
-                        lorem lorem lorem
-                      </Description>
-                    </Right>
-                  </Item>
-                </Link>
-              </Menu.Item>
-            ))}
-
-            <Menu.Divider />
-
-            <Menu.Item onClick={() => props.onAddBoardClick()}>
-              Create board...
-            </Menu.Item>
-          </Menu>
-        }
-      >
-        <Square>
-          <Icon type="project" />
-          <IconTitle>Boards</IconTitle>
-        </Square>
-      </Dropdown>
+            </Menu>
+          }
+        >
+          <Square>
+            <Icon type="project" />
+            <IconTitle>Boards</IconTitle>
+          </Square>
+        </Dropdown>
+      </Container>
     )}
   </BoardsProvider>
 );
@@ -65,6 +66,12 @@ export const BoardsDropdown = (props: Props) => (
 function getLetter(title) {
   return (R.head([...title]) || '#').toUpperCase();
 }
+
+const Container = styled.div`
+  .ant-dropdown {
+    width: 300px;
+  }
+`;
 
 const Item = styled.div`
   display: flex;

@@ -9,6 +9,7 @@ export const BOARDS_QUERY = gql`
       title
       color
       private
+      description
     }
   }
 `;

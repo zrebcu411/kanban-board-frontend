@@ -3,8 +3,9 @@
 import React from 'react';
 import { Mutation, type MutationFunction } from 'react-apollo';
 
-import { ADD_BOARD_MUTATION } from './mutations';
 import { BOARDS_QUERY } from '../../providers/boards/queries.js';
+
+import { ADD_BOARD_MUTATION } from './mutations';
 
 import type {
   AddBoardResult,

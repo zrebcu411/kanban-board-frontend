@@ -9,6 +9,7 @@ import { If, Loader } from '../../components';
 import * as User from '../../domain/user';
 import { MeProvider } from '../../providers';
 
+import { Card } from './Card';
 import { AddCardTemplate } from './AddCardTemplate';
 import { AddLaneTemplate } from './AddLaneTemplate';
 
@@ -36,7 +37,11 @@ export const View = (props: Props) => {
           canAddLanes
           newCardTemplate={<AddCardTemplate boardId={+props.board.id} />}
           newLaneTemplate={<AddLaneTemplate boardId={+props.board.id} />}
-        />
+          customCardLayout
+        >
+          {/* $FlowFixMe */}
+          <Card />
+        </BoardComponent>
       </BoardContainer>
     </Container>
   );

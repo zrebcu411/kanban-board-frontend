@@ -36,14 +36,17 @@ export const AddCardMutation = (props: Props) => (
             variables: {
               boardId: props.boardId,
               laneId: props.laneId,
-              title: props.title
+              title: props.title,
+              description: props.description
             }
           })
             .then(res => {
               if (res && res.data) {
                 props.onAdd({
                   id: res.data.createCard.id,
-                  title: res.data.createCard.title
+                  title: res.data.createCard.title,
+                  description: res.data.createCard.description,
+                  createdAt: res.data.createCard.createdAt
                 });
               }
             })

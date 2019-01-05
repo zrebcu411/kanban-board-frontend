@@ -13,6 +13,7 @@ export type Boards_boards = {
   title: string,
   color: string,
   private: boolean,
+  description: string,
 };
 
 export type Boards = {
@@ -57,6 +58,7 @@ export type AddBoard = {
 
 export type AddBoardVariables = {
   title: string,
+  description: string,
   private: boolean,
   color: string,
 };
@@ -96,6 +98,8 @@ export type AddLaneVariables = {
 export type AddCard_createCard = {
   id: string,
   title: string,
+  description: string,
+  createdAt: string,
 };
 
 export type AddCard = {
@@ -106,6 +110,7 @@ export type AddCardVariables = {
   boardId: number,
   laneId: number,
   title: string,
+  description: string,
 };
 
 
@@ -120,6 +125,8 @@ export type AddCardVariables = {
 export type Board_board_lanes_cards = {
   id: string,
   title: string,
+  description: string,
+  createdAt: string,
 };
 
 export type Board_board_lanes = {

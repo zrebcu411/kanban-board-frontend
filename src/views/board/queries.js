@@ -15,6 +15,8 @@ export const BOARD_QUERY = gql`
         cards {
           id
           title
+          description
+          createdAt
         }
       }
     }

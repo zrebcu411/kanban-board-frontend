@@ -7,6 +7,8 @@ import { Modal, Input, Select, Icon } from 'antd';
 import { CirclePicker } from 'react-color';
 import styled, { createGlobalStyle } from 'styled-components';
 
+import * as Messages from '../../domain/messages';
+
 import { AddBoardMutation } from './AddBoardMutation';
 
 type Props = {|
@@ -52,10 +54,12 @@ export const ModalComponent = (props: Props) => {
             flush();
           }}
           onOk={() =>
-            addBoard({ title, color, private: priv }).then(res => {
-              props.onToggle();
-              props.history.push(`/board/${res.id}`);
-            })
+            addBoard({ title, description, color, private: priv })
+              .then(res => {
+                props.onToggle();
+                props.history.push(`/board/${res.id}`);
+              })
+              .catch(() => Messages.error())
           }
         >
           <Content>
