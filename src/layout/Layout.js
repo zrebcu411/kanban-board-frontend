@@ -8,12 +8,16 @@ import {
   Dropdown,
   Menu,
   Icon as AntIcon,
-  Badge
+  Badge,
+  Spin
 } from 'antd';
 
 import { authContext } from '../context/AuthContext';
-import { BoardsDropdown } from './BoardsDropdown';
+import * as User from '../domain/user';
+import { MeProvider } from '../providers';
+
 import { AddBoardModal } from '../views/board/AddBoardModal';
+import { BoardsDropdown } from './BoardsDropdown';
 
 type Props = {|
   children: React$Node
@@ -25,8 +29,6 @@ export const Layout = (props: Props) => {
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
-
-  const context = useContext(authContext);
 
   return (
     <Wrapper>
@@ -77,11 +79,13 @@ export const Layout = (props: Props) => {
             overlay={
               <Menu>
                 <Menu.Item>
-                  <ItemTitle>Information</ItemTitle>
-                  <ItemDescription>
-                    A board is made up of cards ordered on lists. Use it to
-                    manage projects, track information, or organize anything.
-                  </ItemDescription>
+                  <Github>
+                    <ItemTitle>Information</ItemTitle>
+                    <ItemDescription>
+                      A board is made up of cards ordered on lists. Use it to
+                      manage projects, track information, or organize anything.
+                    </ItemDescription>
+                  </Github>
                 </Menu.Item>
               </Menu>
             }
@@ -97,11 +101,13 @@ export const Layout = (props: Props) => {
             overlay={
               <Menu>
                 <Menu.Item>
-                  <ItemTitle>Notifications</ItemTitle>
-                  <ItemDescription>
-                    A board is made up of cards ordered on lists. Use it to
-                    manage projects, track information, or organize anything.
-                  </ItemDescription>
+                  <Github>
+                    <ItemTitle>Notifications</ItemTitle>
+                    <ItemDescription>
+                      A board is made up of cards ordered on lists. Use it to
+                      manage projects, track information, or organize anything.
+                    </ItemDescription>
+                  </Github>
                 </Menu.Item>
               </Menu>
             }
@@ -113,19 +119,7 @@ export const Layout = (props: Props) => {
             </Square>
           </Dropdown>
 
-          <Dropdown
-            trigger={['click']}
-            getPopupContainer={node => node.parentNode}
-            overlay={
-              <Menu>
-                <Menu.Item onClick={() => context.signOut()}>
-                  Sign out
-                </Menu.Item>
-              </Menu>
-            }
-          >
-            <Avatar icon="user" />
-          </Dropdown>
+          <MeDropdown />
         </Right>
       </Bar>
       <Content>{props.children}</Content>
@@ -133,19 +127,88 @@ export const Layout = (props: Props) => {
   );
 };
 
+const MeDropdown = props => {
+  const context = useContext(authContext);
+
+  return (
+    <MeProvider>
+      {({ me, loading }) => (
+        <Dropdown
+          trigger={['click']}
+          getPopupContainer={node => node.parentNode}
+          overlay={
+            <Menu>
+              {loading && (
+                <Menu.Item key="loading">
+                  <Spin size="small" />
+                </Menu.Item>
+              )}
+
+              {!loading && me && (
+                <Menu.Item key={me.id} className="hoverless">
+                  <Me>
+                    <Icon type="user" color="dark" />
+                    <MeRight>
+                      <Name>{me.name}</Name>
+                      <Email>{`(${me.email})`}</Email>
+                    </MeRight>
+                  </Me>
+                </Menu.Item>
+              )}
+              <Menu.Divider />
+              <Menu.Item key="contact">
+                <Github>Contact</Github>
+              </Menu.Item>
+              <Menu.Item key="author">
+                <Github>Author</Github>
+              </Menu.Item>
+              <Menu.Divider />
+              <Menu.Item key="signout" onClick={() => context.signOut()}>
+                <Icon type="logout" color="dark" />
+                Sign out
+              </Menu.Item>
+            </Menu>
+          }
+        >
+          <Avatar>
+            {loading || !me ? undefined : User.getInitials(me.name)}
+          </Avatar>
+        </Dropdown>
+      )}
+    </MeProvider>
+  );
+};
+
+const Github = props => (
+  <a
+    target="_blank"
+    rel="noopener noreferrer"
+    href="https://github.com/zrebcu411"
+  >
+    {props.children}
+  </a>
+);
+
 const Wrapper = styled.div`
   .ant-dropdown {
     max-width: 300px;
+    z-index: 1000;
   }
 
   .ant-dropdown-menu-item {
     font-size: 15px;
   }
+
+  .hoverless {
+    &:hover {
+      background-color: initial;
+      cursor: initial;
+    }
+  }
 `;
 
 const Content = styled.div`
-  height: calc(100vh - 40px);
-  overflow: hidden;
+  height: 100vh;
 `;
 
 const Logo = styled.h1`
@@ -167,10 +230,12 @@ const Logo = styled.h1`
 const Bar = styled.div`
   padding: 0 6px;
   height: 40px;
-  background-color: #026aa7;
+  background-color: rgba(0, 0, 0, 0.15);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  z-index: 1000;
+  position: relative;
 `;
 
 const Left = styled.div`
@@ -218,6 +283,7 @@ export const Icon = styled(AntIcon)`
   color: #fff;
   font-size: 17px;
   font-weight: 700;
+  color: ${p => (p.color === 'dark' ? 'rgba(0,0,0,0.65)' : undefined)};
 `;
 
 export const IconTitle = styled.span`
@@ -228,4 +294,25 @@ export const IconTitle = styled.span`
 
 const Avatar = styled(AntAvatar)`
   cursor: pointer;
+`;
+
+const Me = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const MeRight = styled.div`
+  flex: 1;
+  padding-left: 10px;
+  display: flex;
+  align-items: center;
+`;
+
+const Name = styled.div`
+  font-weight: 600;
+`;
+
+const Email = styled.div`
+  padding-left: 4px;
+  color: rgba(0, 0, 0, 0.55);
 `;

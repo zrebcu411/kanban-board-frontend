@@ -2,10 +2,12 @@
 
 import React from 'react';
 import BoardComponent from 'react-trello';
-import { Icon, Divider, Avatar as AntAvatar } from 'antd';
+import { Icon, Divider, Avatar as AntAvatar, Dropdown, Menu, Spin } from 'antd';
 import styled from 'styled-components';
 
-import { If } from '../../components';
+import { If, Loader } from '../../components';
+import * as User from '../../domain/user';
+import { MeProvider } from '../../providers';
 
 import { AddCardTemplate } from './AddCardTemplate';
 import { AddLaneTemplate } from './AddLaneTemplate';
@@ -13,56 +15,145 @@ import { AddLaneTemplate } from './AddLaneTemplate';
 import type { BoardT } from './types';
 
 type Props = {|
-  board: ?BoardT
+  board: ?BoardT,
+  loading: boolean
 |};
 
 export const View = (props: Props) => {
+  if (props.loading) return <Loader center />;
+
   if (!props.board) return null;
 
   return (
-    <Container>
-      <Header>
-        <Title>{props.board.title}</Title>
-        <Item>
-          <Icon type="star" />
-        </Item>
-        <Divider type="vertical" />
-        <Item>
-          <If cond={props.board.private}>
-            <Icon type="lock" />
-            <IconTitle>Private</IconTitle>
-          </If>
-          <If cond={!props.board.private}>
-            <Icon type="unlock" />
-            <IconTitle>Public</IconTitle>
-          </If>
-        </Item>
-        <Divider type="vertical" />
-        <Item>
-          <Avatar icon="user" />
-        </Item>
-      </Header>
-      <BoardComponent
-        data={{ lanes: props.board.lanes }}
-        draggable
-        editable
-        canAddLanes
-        onCardAdd={(card, id) => console.log(id, card)}
-        newCardTemplate={<AddCardTemplate />}
-        newLaneTemplate={<AddLaneTemplate />}
-        // addCardLink={<div>ss</div>}
-      />
+    <Container background={props.board.color}>
+      <Header board={props.board} />
+      <BoardContainer>
+        <BoardComponent
+          data={{ lanes: props.board.lanes || [] }}
+          className="kanban-board"
+          draggable
+          editable
+          canAddLanes
+          newCardTemplate={<AddCardTemplate boardId={+props.board.id} />}
+          newLaneTemplate={<AddLaneTemplate boardId={+props.board.id} />}
+        />
+      </BoardContainer>
     </Container>
   );
 };
 
-const Container = styled.div``;
+const MeDropdown = props => (
+  <MeProvider>
+    {({ me, loading }) => (
+      <Dropdown
+        trigger={['click']}
+        overlay={
+          <Menu>
+            {loading && (
+              <Menu.Item key="loading">
+                <Spin size="small" />
+              </Menu.Item>
+            )}
 
-const Header = styled.div`
+            {!loading && me && (
+              <Menu.Item key={me.id}>
+                <Me>
+                  <AntAvatar size="large">
+                    {User.getInitials(me.name)}
+                  </AntAvatar>
+                  <Right>
+                    <Name>{me.name}</Name>
+                    <Email>{me.email}</Email>
+                  </Right>
+                </Me>
+              </Menu.Item>
+            )}
+            <Menu.Divider />
+            <Menu.Item>Edit profile...</Menu.Item>
+          </Menu>
+        }
+      >
+        <Item>
+          <Avatar>
+            {loading || !me ? undefined : User.getInitials(me.name)}
+          </Avatar>
+        </Item>
+      </Dropdown>
+    )}
+  </MeProvider>
+);
+
+const Header = props => (
+  <HeaderBar>
+    <Title>{props.board.title}</Title>
+    <Item>
+      <Icon type="star" />
+    </Item>
+    <Divider type="vertical" />
+    <Item>
+      <If cond={props.board.private}>
+        <Icon type="lock" />
+        <IconTitle>Private</IconTitle>
+      </If>
+      <If cond={!props.board.private}>
+        <Icon type="team" />
+        <IconTitle>Public</IconTitle>
+      </If>
+    </Item>
+    <Divider type="vertical" />
+
+    <MeDropdown />
+  </HeaderBar>
+);
+
+const Container = styled.div`
+  background-color: ${p => p.background || 'red'};
+  padding-top: 40px;
+  margin-top: -40px;
+
+  .kanban-board {
+    background-color: transparent;
+    height: calc(100vh - 83px);
+
+    .smooth-dnd-container {
+      &:last-child {
+        section {
+          background-color: rgba(0, 0, 0, 0.15);
+        }
+        button:not(.ant-btn) {
+          background-color: transparent;
+          outline: none;
+        }
+      }
+    }
+
+    .react-trello-lane {
+      padding-bottom: 5px;
+
+      header {
+        z-index: 500;
+      }
+
+      > div {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        max-height: 84vh;
+        position: relative;
+
+        > a {
+          position: static;
+        }
+      }
+    }
+  }
+`;
+
+const BoardContainer = styled.div``;
+
+const HeaderBar = styled.div`
   display: flex;
   padding: 12px 15px 0 15px;
   align-items: center;
-  background-color: #3179ba;
   color: #fff;
 `;
 
@@ -84,7 +175,28 @@ const IconTitle = styled.span`
 `;
 
 const Avatar = styled(AntAvatar)`
-  cursor: pointer;
-  width: 30px !important;
-  height: 30px !important;
+  &.ant-avatar-circle {
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+  }
+`;
+
+const Me = styled.div`
+  display: flex;
+`;
+
+const Right = styled.div`
+  flex: 1;
+  padding-left: 10px;
+`;
+
+const Name = styled.div`
+  margin-bottom: 0;
+  font-size: 16px;
+  font-weight: 600;
+`;
+
+const Email = styled.div`
+  font-size: 14px;
 `;
