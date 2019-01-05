@@ -4,6 +4,7 @@ import React, { Component, type ComponentType } from 'react';
 import decodeJwt from 'jwt-decode';
 import * as R from 'ramda';
 
+import { client } from '../core/apollo-client';
 import type { Auth } from './types';
 
 const LS_AUTH_KEY = 'kanban-board-frontend-ls-auth-key';
@@ -60,6 +61,7 @@ export class AuthContextProvider extends Component<
 
   signOut = () => {
     removeAuthFromLocalStorage();
+    client.clearStore();
     this.setState({ auth: null });
   };
 
