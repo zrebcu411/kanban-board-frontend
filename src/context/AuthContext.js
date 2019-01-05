@@ -26,7 +26,9 @@ const initialState = {
   isLoggedIn: R.always(false)
 };
 
-const { Provider, Consumer } = React.createContext<State>(initialState);
+export const authContext = React.createContext<State>(initialState);
+
+const { Provider, Consumer } = authContext;
 
 export const AuthContextConsumer = Consumer;
 

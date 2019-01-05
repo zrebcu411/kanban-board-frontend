@@ -6,7 +6,9 @@ import { Input, Button } from 'antd';
 
 import { AddLaneMutation } from './AddLaneMutation';
 
-type Props = {||};
+type Props = {|
+  boardId: number
+|};
 
 export const AddLaneTemplate = (props: Props) => {
   const [title, setTitle] = useState('');
@@ -23,7 +25,7 @@ export const AddLaneTemplate = (props: Props) => {
       <div>
         <AddLaneMutation
           title={title}
-          boardId={11}
+          boardId={props.boardId}
           // $FlowFixMe
           onAdd={props.onAdd}
         />

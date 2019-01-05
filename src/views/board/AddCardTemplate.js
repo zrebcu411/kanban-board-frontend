@@ -6,7 +6,9 @@ import { Input, Button } from 'antd';
 
 import { AddCardMutation } from './AddCardMutation';
 
-type Props = {||};
+type Props = {|
+  boardId: number
+|};
 
 export const AddCardTemplate = (props: Props) => {
   const [title, setTitle] = useState('');
@@ -30,7 +32,7 @@ export const AddCardTemplate = (props: Props) => {
       <AddCardMutation
         title={title}
         description={description}
-        boardId={11}
+        boardId={props.boardId}
         // $FlowFixMe
         laneId={+props.laneId}
         // $FlowFixMe
@@ -55,7 +57,7 @@ const Wrapper = styled.div`
   position: relative;
   padding: 10px;
   max-width: 250px;
-  margin-bottom: 7px;
+  margin-bottom: 4px;
   min-width: 230px;
 `;
 

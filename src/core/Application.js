@@ -30,7 +30,7 @@ export const Application = () => (
             render={() => (
               <Layout>
                 <Switch>
-                  <Route path="/board" component={Board} />
+                  <Route path="/board/:id" component={Board} />
                   <Redirect to="/" />
                 </Switch>
               </Layout>

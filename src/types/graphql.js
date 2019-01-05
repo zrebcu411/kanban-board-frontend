@@ -5,6 +5,68 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: Boards
+// ====================================================
+
+export type Boards_boards = {
+  id: string,
+  title: string,
+  color: string,
+  private: boolean,
+};
+
+export type Boards = {
+  boards: Array<Boards_boards>
+};
+
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: Me
+// ====================================================
+
+export type Me_me = {
+  id: string,
+  name: string,
+  email: string,
+};
+
+export type Me = {
+  me: ?Me_me
+};
+
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: AddBoard
+// ====================================================
+
+export type AddBoard_createBoard = {
+  id: string
+};
+
+export type AddBoard = {
+  createBoard: AddBoard_createBoard
+};
+
+export type AddBoardVariables = {
+  title: string,
+  private: boolean,
+  color: string,
+};
+
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: AddLane
 // ====================================================
 

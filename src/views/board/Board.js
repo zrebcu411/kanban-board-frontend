@@ -1,22 +1,21 @@
 // @flow
 
-import React, { Component } from 'react';
+import React from 'react';
+import { type ContextRouter } from 'react-router';
 
 import { Provider } from './Provider';
 import { View } from './View';
 
-type Props = {||};
+type Props = ContextRouter;
 
-type State = {};
+export const Board = (props: Props) => {
+  const id = props.match.params.id;
 
-export class Board extends Component<Props, State> {
-  state = {};
+  if (!id) return null; // TODO: 404
 
-  render() {
-    return (
-      <Provider id={11}>
-        {({ board, loading }) => <View board={board} />}
-      </Provider>
-    );
-  }
-}
+  return (
+    <Provider id={+id}>
+      {({ board, loading }) => <View board={board} loading={loading} />}
+    </Provider>
+  );
+};
